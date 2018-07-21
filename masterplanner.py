@@ -282,8 +282,6 @@ def update_nl():
             cursor=connection.cursor()
             cursor.execute(query)
             res= cursor.fetchall()
-            print res
-            #print res[0][2]
             if (res[0][0] == 'NL') and (res[0][2] != 'KERN'):
                 stp += res[0][1]
 
@@ -292,6 +290,72 @@ def update_nl():
         aantal_nl_berekend.config(fg='green')
     else:
         aantal_nl_berekend.config(fg='black')
+
+def update_avo():
+    stp = 0
+    for number in range(1,33):
+        vaknaam = eval('selectie' + str(number)).cget('text')
+        if (vaknaam != 'Selecteer een vak'):
+            query = """
+            SELECT Studiepunten,Groep
+            FROM vakken
+            WHERE Naam=""" + "'" + str(vaknaam) + "'"
+
+            cursor=connection.cursor()
+            cursor.execute(query)
+            res= cursor.fetchall()
+            if (res[0][1] == 'AVO'):
+                stp += res[0][0]
+
+    aantal_avo_berekend.config(text=str(stp))
+    if (stp >= 9) and (stp <= 12):
+        aantal_avo_berekend.config(fg='green')
+    else:
+        aantal_avo_berekend.config(fg='black')
+
+def update_verdiepend():
+    stp = 0
+    for number in range(1,33):
+        vaknaam = eval('selectie' + str(number)).cget('text')
+        if (vaknaam != 'Selecteer een vak'):
+            query = """
+            SELECT Studiepunten,Groep
+            FROM vakken
+            WHERE Naam=""" + "'" + str(vaknaam) + "'"
+
+            cursor=connection.cursor()
+            cursor.execute(query)
+            res= cursor.fetchall()
+            if ('1' in res[0][1]):
+                stp += res[0][0]
+
+    aantal_verdiepend_berekend.config(text=str(stp))
+    if (stp >= 24):
+        aantal_verdiepend_berekend.config(fg='green')
+    else:
+        aantal_verdiepend_berekend.config(fg='black')
+
+def update_bedrijven():
+    stp = 0
+    bedrijven = ['H03G7A', 'H02X6A', 'H0T39A', 'H0T91A']
+    for number in range(1,33):
+        vaknaam = eval('selectie' + str(number)).cget('text')
+        if (vaknaam != 'Selecteer een vak'):
+            query = """
+            SELECT Code,Studiepunten
+            FROM vakken
+            WHERE Naam=""" + "'" + str(vaknaam) + "'"
+
+            cursor=connection.cursor()
+            cursor.execute(query)
+            res= cursor.fetchall()
+            if (res[0][0] in  bedrijven):
+                stp += res[0][1]
+
+    if (stp > 9):
+        max_bedrijven.config(fg='red')
+    else:
+        max_bedrijven.config(fg='black')
 
 def on_select(event,number,semester):
     name = eval('selectie' + str(number))
@@ -310,6 +374,9 @@ def on_select(event,number,semester):
     update_tot3()
     update_tot4()
     update_nl()
+    update_avo()
+    update_verdiepend()
+    update_bedrijven()
 
 def update():
     for number in range(1,6):
